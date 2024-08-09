@@ -12,59 +12,65 @@ import {RNCamera} from 'react-native-camera';
 import axios from 'axios';
 
 const Scanner = ({navigation, route}) => {
-  const { selectedOption } = route.params;
-  console.log('Selected Option:', selectedOption);
+  // const { selectedOption } = route.params;
+  // console.log('Selected Option:', selectedOption);
+  const { eventIds } = route.params;
+  console.log("eventId===",eventIds)
   
   const [scannedData, setScannedData] = useState('');
 
-  const onSuccess = async e => {
+  const onSuccess = async (e) => {
     const scannedCode = e.data;
+    console.log("e=====>", e.data)
     setScannedData(scannedCode);
 
     try {
-      const userId = '1';
-      const eventId = '1';
-      const apiUrl = `https://4cdd-2405-201-1007-714a-39e2-896f-b381-aaaa.ngrok-free.app/api/users/2/events/2`;
+      const userId = e.data;
+      const eventId = eventIds;
+      const apiUrl = `https://4cdd-2405-201-1007-714a-39e2-896f-b381-aaaa.ngrok-free.app/api/users/${userId}/events/${eventId}`;
       console.log('apiUrl', apiUrl);
 
       const response = await fetch(apiUrl, {
         method: 'PUT',
         headers: {
-          Accept: 'application/hal+json',
+          // Accept: 'application/hal+json',
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          // userId: e.data,
+          // eventId: selectedOption
+        })
       });
 
       console.log('res===', response);
 
       if (response.ok) {
         navigation.navigate('SuccessScreen');
-      } else {
-        navigation.navigate('ErrorScreen');
+      } else if (response.status === 400) {
+        navigation.navigate('ErrorScreen')
       }
     } catch (error) {
       console.error('Error:', error);
-      navigation.navigate('ErrorScreen');
     }
   };
 
   return (
     <QRCodeScanner
       reactivate={true}
-      reactivateTimeout={500}
+      reactivateTimeout={5000}
       showMarker={true}
       onRead={e => onSuccess(e)}
       flashMode={RNCamera.Constants.FlashMode.torch}
       topContent={<></>}
       bottomContent={
-        <TouchableOpacity style={styles.buttonTouchable}>
+        <TouchableOpacity style={styles.buttonTouchable} onPress={() => navigation.navigate('SuccessScreen')}>
           <Text style={styles.buttonText}>
             {scannedData
               ? `Scanned Data: ${scannedData}`
               : 'No data scanned yet'}
           </Text>
           <Text style={styles.selectedOptionText}>
-            Selected Option: {selectedOption}
+            {/* Selected Option: {selectedOption} */}
           </Text>
         </TouchableOpacity>
       }
