@@ -27,7 +27,7 @@ const Scanner = ({navigation, route}) => {
     try {
       const userId = e.data;
       const eventId = eventIds;
-      const apiUrl = `https://4cdd-2405-201-1007-714a-39e2-896f-b381-aaaa.ngrok-free.app/api/users/${userId}/events/${eventId}`;
+      const apiUrl = `https://868b-2409-40c0-101d-6c90-2dff-c8bf-f368-5987.ngrok-free.app/api/users/${userId}/events/${eventId}`;
       console.log('apiUrl', apiUrl);
 
       const response = await fetch(apiUrl, {
